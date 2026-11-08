@@ -15,8 +15,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: yoshi389111/github-profile-3d-contrib@latest
         env:
-          # 想把私有仓库的贡献也算进去，就建 PAT 存成 secret 并改成 secrets.PAT
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 设置了 PAT secret 时会统计私有仓库贡献；没设置时退回默认 token（只统计公开贡献）
+          GITHUB_TOKEN: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
       - name: Commit & Push
         run: |
