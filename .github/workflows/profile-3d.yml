@@ -18,6 +18,20 @@ jobs:
           # 设置了 PAT secret 时会统计私有仓库贡献；没设置时退回默认 token（只统计公开贡献）
           GITHUB_TOKEN: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
+      - name: Generate activity graph
+        env:
+          TOKEN: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          GRAPH_REF: 0962e9461de815933d462e8b98c7ce566cada8fb # Ashutosh00710/github-readme-activity-graph, pinned
+        run: |
+          git clone -q https://github.com/Ashutosh00710/github-readme-activity-graph.git /tmp/ag
+          git -C /tmp/ag checkout -q "$GRAPH_REF"
+          (cd /tmp/ag && npm ci --silent && npm run build --silent)
+          (cd /tmp/ag && PORT=5100 node dist/main.js &) 
+          for i in $(seq 30); do curl -sf -o /dev/null localhost:5100 && break; sleep 1; done
+          mkdir -p profile-activity-graph
+          curl -sf -o profile-activity-graph/graph.svg \
+            "http://localhost:5100/graph?username=${{ github.repository_owner }}&bg_color=ffffff&color=40c463&title_color=40c463&line=40c463&point=f9a825&area=true&area_color=9be9a8&hide_border=true"
+          grep -q '<svg' profile-activity-graph/graph.svg
       - name: Commit & Push
         run: |
           git config user.name github-actions
