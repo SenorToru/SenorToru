@@ -5,5 +5,3 @@
 </p>
 
 <img src="profile-3d-contrib/profile-season-animate.svg" alt="3D contribution graph" />
-
-<img src="profile-activity-graph/graph.svg" alt="Contribution activity graph" />
